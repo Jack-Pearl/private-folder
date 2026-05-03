@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Закрита папка</title>
+  <style>
+    body { font-family: Arial; text-align: center; margin-top: 100px; }
+    #files { display: none; }
+  </style>
+</head>
+<body>
+
+<h2>Введіть пароль</h2>
+<input type="password" id="pass">
+<button onclick="check()">Увійти</button>
+
+<div id="files">
+  <h2>📁 Файли</h2>
+  <a href="https://docs.google.com/spreadsheets/d/1NcQ220nIIugGbC9Ixt4Z6ZScILz4yucsqr3nUR5Oz6M/edit?gid=52845855#gid=52845855" target="_blank">Tabel Termi</a><br>
+  <a href="https://drive.google.com/drive/u/0/folders/1GN4Jwz_0B9D714cWIGBJMSCbSnZarXm0" target="_blank">Net</a>
+</div>
+
+<script>
+function check() {
+  let p = document.getElementById("pass").value;
+  if (p === "1234") {
+    document.getElementById("files").style.display = "block";
+  } else {
+    alert("Невірний пароль");
+  }
+}
+</script>
+
+</body>
+</html>
