@@ -3,78 +3,67 @@
 <head>
   <meta charset="UTF-8">
   <title>Private Drive</title>
-  <style>
-    body {
-      font-family: Arial;
-      max-width: 600px;
-      margin: 50px auto;
-    }
-    input, button {
-      padding: 10px;
-      margin: 5px;
-      width: 100%;
-    }
-    .file {
-      padding: 10px;
-      border: 1px solid #ddd;
-      margin-top: 10px;
-    }
-  </style>
 </head>
 <body>
 
-<h2>🔐 Вхід</h2>
+<h2>🔐 Login</h2>
 
-<input id="password" type="password" placeholder="Введи пароль">
-<button onclick="login()">Увійти</button>
+<input id="email" value="hidden@site.com">
+<input id="password" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
 
 <hr>
 
-<h3>📁 Файли</h3>
+<h3>📁 Files</h3>
 <div id="files"></div>
 
 <script type="module">
 import { createClient } from "https://esm.sh/@supabase/supabase-js"
 
-// 🔑 КЛЮЧІ СЮДИ
+// ✔ FIXED CLIENT
 const supabase = createClient(
   "https://shttnxwespzupzskjivz.supabase.co",
   "sb_publishable_IdjMj-7woOPYf7cF7X3uig_iukUc725"
 )
 
-// 🔐 ЛОГІН ПО ПАРОЛЮ
+// 🔐 LOGIN
 window.login = async function () {
+  const email = document.getElementById("email").value
   const password = document.getElementById("password").value
 
   const { error } = await supabase.auth.signInWithPassword({
-    email: "hidden@site.com",
-    password: password
+    email,
+    password
   })
 
   if (error) {
-    alert("❌ Неправильний пароль")
-  } else {
-    alert("✅ Вхід успішний")
-    loadFiles()
+    alert("❌ Login failed: " + error.message)
+    return
   }
+
+  alert("✅ Logged in")
+  loadFiles()
 }
 
-// 📁 ЗАВАНТАЖЕННЯ ФАЙЛІВ
+// 📁 LOAD FILES
 async function loadFiles() {
   const { data, error } = await supabase
     .from("files")
     .select("*")
 
   if (error) {
-    document.getElementById("files").innerHTML = "❌ Помилка завантаження"
+    console.log(error)
+    document.getElementById("files").innerHTML =
+      "❌ Error loading files: " + error.message
     return
   }
 
-  document.getElementById("files").innerHTML = data.map(f => `
-    <div class="file">
-      📄 <a href="${f.url}" target="_blank">${f.name}</a>
-    </div>
-  `).join("")
+  document.getElementById("files").innerHTML = data
+    .map(f => `
+      <div>
+        📄 <a href="${f.url}" target="_blank">${f.name}</a>
+      </div>
+    `).join("")
 }
 </script>
 
