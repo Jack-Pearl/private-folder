@@ -1,33 +1,80 @@
 <!DOCTYPE html>
-<html>
+<html lang="uk">
 <head>
   <meta charset="UTF-8">
-  <title>Закрита папка</title>
+  <title>Private Drive</title>
   <style>
-    body { font-family: Arial; text-align: center; margin-top: 100px; }
-    #files { display: none; }
+    body {
+      font-family: Arial;
+      max-width: 600px;
+      margin: 50px auto;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px;
+      width: 100%;
+    }
+    .file {
+      padding: 10px;
+      border: 1px solid #ddd;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
 
-<h2>Введіть пароль</h2>
-<input type="password" id="pass">
-<button onclick="check()">Увійти</button>
+<h2>🔐 Вхід</h2>
 
-<div id="files">
-  <h2>📁 Файли</h2>
-  <a href="https://docs.google.com/spreadsheets/d/1NcQ220nIIugGbC9Ixt4Z6ZScILz4yucsqr3nUR5Oz6M/edit?gid=52845855#gid=52845855" target="_blank">Tabel Termi</a><br>
-  <a href="https://drive.google.com/drive/u/0/folders/1GN4Jwz_0B9D714cWIGBJMSCbSnZarXm0" target="_blank">Net</a>
-</div>
+<input id="password" type="password" placeholder="Введи пароль">
+<button onclick="login()">Увійти</button>
 
-<script>
-function check() {
-  let p = document.getElementById("pass").value;
-  if (p === "1234") {
-    document.getElementById("files").style.display = "block";
+<hr>
+
+<h3>📁 Файли</h3>
+<div id="files"></div>
+
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js"
+
+// 🔑 ВСТАВ СВОЇ КЛЮЧІ СЮДИ
+const supabase = createClient(
+  "https://shttnxwespzupzskjivz.supabase.co",
+  "sb_publishable_IdjMj-7woOPYf7cF7X3uig_iukUc725"
+)
+
+// 🔐 ЛОГІН ПО ПАРОЛЮ
+window.login = async function () {
+  const password = document.getElementById("password").value
+
+  const { error } = await supabase.auth.signInWithPassword({
+    email: "hidden@site.com",
+    password: password
+  })
+
+  if (error) {
+    alert("❌ Неправильний пароль")
   } else {
-    alert("Невірний пароль");
+    alert("✅ Вхід успішний")
+    loadFiles()
   }
+}
+
+// 📁 ЗАВАНТАЖЕННЯ ФАЙЛІВ
+async function loadFiles() {
+  const { data, error } = await supabase
+    .from("files")
+    .select("*")
+
+  if (error) {
+    document.getElementById("files").innerHTML = "❌ Помилка завантаження"
+    return
+  }
+
+  document.getElementById("files").innerHTML = data.map(f => `
+    <div class="file">
+      📄 <a href="${f.url}" target="_blank">${f.name}</a>
+    </div>
+  `).join("")
 }
 </script>
 
