@@ -2,22 +2,17 @@
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
-  <title>Private Drive</title>
+  <title></title>
 </head>
 <body>
 
-<h2>🔐 Login</h2>
+
+<input id="password" type="password" placeholder="">
+<button onclick="login()"></button>
 
 
-<input id="password" type="password" placeholder="Password">
-<button onclick="login()">Login</button>
-
-<hr>
-
-<h3>📁 Files</h3>
 <div id="files"></div>
-<hr>
- 
+
 <script type="module">
 import { createClient } from "https://esm.sh/@supabase/supabase-js"
 
@@ -69,22 +64,7 @@ async function loadFiles() {
 }
 
 
-  async function loadStatus() {
 
-  const { data } = await supabase
-    .from("status")
-    .select("*")
-    .eq("id", 1)
-    .single()
-
-  if (!data) return
-
-  document.getElementById("status").innerHTML =
-    data.index + " / " + data.total +
-    "<br>ETA: " + data.eta + " sec"
-}
-
-  setInterval(loadStatus, 1000)
   
 </script>
 
