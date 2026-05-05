@@ -31,10 +31,10 @@
 <script type="module">
 import { createClient } from "https://esm.sh/@supabase/supabase-js"
 
-// ✅ ВАЖЛИВО: ВСТАВ СВІЙ URL І KEY
+// ✔ FIXED CLIENT
 const supabase = createClient(
-  "https://shttnxwespzupzskjivz.supabase.co",  // ← ВИПРАВЛЕНО
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNodHRueHdlc3B6dXB6c2tqaXZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4Mjg5NDgsImV4cCI6MjA5MzQwNDk0OH0.mBzleY85wsK_4vOCSs2WB0WwS349ftzl9o4NFdeV9-c"                        // ← ВИПРАВЛЕНО
+  "https://shttnxwespzupzskjivz.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNodHRueHdlc3B6dXB6c2tqaXZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4Mjg5NDgsImV4cCI6MjA5MzQwNDk0OH0.mBzleY85wsK_4vOCSs2WB0WwS349ftzl9o4NFdeV9-c"
 )
 
 // 🔐 LOGIN
@@ -55,15 +55,6 @@ window.login = async function () {
   alert("✅ Logged in")
   loadFiles()
 }
-
-// ✅ АВТО-ПЕРЕВІРКА СЕСІЇ (ДОДАНО)
-async function checkSession() {
-  const { data } = await supabase.auth.getSession()
-  if (data.session) {
-    loadFiles()
-  }
-}
-checkSession()
 
 // 📁 LOAD FILES
 async function loadFiles() {
@@ -86,8 +77,7 @@ async function loadFiles() {
     `).join("")
 }
 
-// 🎮 SEND COMMAND
-window.send = async function(cmd) {
+  window.send = async function(cmd) {
 
   const { error } = await supabase
     .from("commands")
@@ -95,25 +85,18 @@ window.send = async function(cmd) {
 
   if (error) {
     alert("❌ Error: " + error.message)
-    console.error(error)
   } else {
-    console.log("✅ Sent:", cmd)
+    console.log("Sent:", cmd)
   }
 }
 
-// 📊 STATUS
-async function loadStatus() {
+  async function loadStatus() {
 
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from("status")
     .select("*")
     .eq("id", 1)
     .single()
-
-  if (error) {
-    console.log(error)
-    return
-  }
 
   if (!data) return
 
@@ -122,9 +105,22 @@ async function loadStatus() {
     "<br>ETA: " + data.eta + " sec"
 }
 
-// 🔄 автооновлення
-setInterval(loadStatus, 1000)
+  setInterval(loadStatus, 1000)
   
 </script>
 
 </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
