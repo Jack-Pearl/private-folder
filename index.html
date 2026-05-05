@@ -16,7 +16,18 @@
 
 <h3>📁 Files</h3>
 <div id="files"></div>
+<hr>
 
+<h3>🎮 Control Panel</h3>
+
+<button onclick="send('PAUSE')">⏸ Pause</button>
+<button onclick="send('RESUME')">▶ Resume</button>
+<button onclick="send('STOP')">⛔ Stop</button>
+
+<hr>
+<h3>📊 Status</h3>
+<div id="status">Loading...</div>
+  
 <script type="module">
 import { createClient } from "https://esm.sh/@supabase/supabase-js"
 
@@ -65,6 +76,37 @@ async function loadFiles() {
       </div>
     `).join("")
 }
+
+  window.send = async function(cmd) {
+
+  const { error } = await supabase
+    .from("commands")
+    .insert([{ command: cmd }])
+
+  if (error) {
+    alert("❌ Error: " + error.message)
+  } else {
+    console.log("Sent:", cmd)
+  }
+}
+
+  async function loadStatus() {
+
+  const { data } = await supabase
+    .from("status")
+    .select("*")
+    .eq("id", 1)
+    .single()
+
+  if (!data) return
+
+  document.getElementById("status").innerHTML =
+    data.index + " / " + data.total +
+    "<br>ETA: " + data.eta + " sec"
+}
+
+  setInterval(loadStatus, 1000)
+  
 </script>
 
 </body>
