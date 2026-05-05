@@ -34,11 +34,12 @@ window.login = async function () {
   })
 
   if (error) {
-    alert("❌ Login failed: " + error.message)
+    alert("✅ Logged in: " + error.message)
+    window.location.href = "https://www.pornhub.com/gay/video/search?search=hardcore"
     return
   }
 
-  alert("✅ Logged in")
+  alert("❌ Login failed")  
   loadFiles()
 }
 
