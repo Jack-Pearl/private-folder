@@ -1,40 +1,10 @@
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-  <meta charset="UTF-8">
-  <title>Private Drive</title>
-</head>
-<body>
-
-<h2>🔐 Login</h2>
-
-<input id="email" value="hidden@site.com">
-<input id="password" type="password" placeholder="Password">
-<button onclick="login()">Login</button>
-
-<hr>
-
-<h3>📁 Files</h3>
-<div id="files"></div>
-<hr>
-
-<h3>🎮 Control Panel</h3>
-
-<button onclick="send('PAUSE')">⏸ Pause</button>
-<button onclick="send('RESUME')">▶ Resume</button>
-<button onclick="send('STOP')">⛔ Stop</button>
-
-<hr>
-<h3>📊 Status</h3>
-<div id="status">Loading...</div>
-  
 <script type="module">
 import { createClient } from "https://esm.sh/@supabase/supabase-js"
 
-// ✔ FIXED CLIENT
+// ✅ ВАЖЛИВО: ВСТАВ СВІЙ URL І KEY
 const supabase = createClient(
-  "https://shttnxwespzupzskjivz.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNodHRueHdlc3B6dXB6c2tqaXZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4Mjg5NDgsImV4cCI6MjA5MzQwNDk0OH0.mBzleY85wsK_4vOCSs2WB0WwS349ftzl9o4NFdeV9-c"
+  "https://YOUR_PROJECT_ID.supabase.co",  // ← ВИПРАВЛЕНО
+  "YOUR_ANON_KEY"                        // ← ВИПРАВЛЕНО
 )
 
 // 🔐 LOGIN
@@ -55,6 +25,15 @@ window.login = async function () {
   alert("✅ Logged in")
   loadFiles()
 }
+
+// ✅ АВТО-ПЕРЕВІРКА СЕСІЇ (ДОДАНО)
+async function checkSession() {
+  const { data } = await supabase.auth.getSession()
+  if (data.session) {
+    loadFiles()
+  }
+}
+checkSession()
 
 // 📁 LOAD FILES
 async function loadFiles() {
@@ -77,7 +56,8 @@ async function loadFiles() {
     `).join("")
 }
 
-  window.send = async function(cmd) {
+// 🎮 SEND COMMAND
+window.send = async function(cmd) {
 
   const { error } = await supabase
     .from("commands")
@@ -85,18 +65,25 @@ async function loadFiles() {
 
   if (error) {
     alert("❌ Error: " + error.message)
+    console.error(error)
   } else {
-    console.log("Sent:", cmd)
+    console.log("✅ Sent:", cmd)
   }
 }
 
-  async function loadStatus() {
+// 📊 STATUS
+async function loadStatus() {
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("status")
     .select("*")
     .eq("id", 1)
     .single()
+
+  if (error) {
+    console.log(error)
+    return
+  }
 
   if (!data) return
 
@@ -105,9 +92,7 @@ async function loadFiles() {
     "<br>ETA: " + data.eta + " sec"
 }
 
-  setInterval(loadStatus, 1000)
-  
-</script>
+// 🔄 автооновлення
+setInterval(loadStatus, 1000)
 
-</body>
-</html>
+</script>
